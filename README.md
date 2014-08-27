@@ -42,7 +42,6 @@ For example:
     $ docker pull bbinet/reprepro
 
     $ docker run --name reprepro \
-        -v authorized_keys:/config/authorized_keys:ro \
         -v /home/reprepro/data:/data \
         -v /home/reprepro/config:/config \
         -p 22:22 \
