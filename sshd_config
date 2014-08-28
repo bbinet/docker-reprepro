@@ -29,7 +29,7 @@ StrictModes yes
 
 RSAAuthentication yes
 PubkeyAuthentication yes
-AuthorizedKeysFile /config/authorized_keys
+AuthorizedKeysFile /config/%u-authorized_keys
 
 # Don't read the user's ~/.rhosts and ~/.shosts files
 IgnoreRhosts yes
