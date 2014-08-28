@@ -22,6 +22,7 @@ Run
 
 To configure your reprepro container, you need to provide a read-only `/config`
 volume that should contain 4 files:
+
   - `/config/apt-authorized_keys`: ssh authorized_keys file for the apt user
     which should be used when running `apt-get` commands.
     Should be chown root:root and chmod 644.
