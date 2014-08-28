@@ -20,22 +20,34 @@ You can now push the new image to the public registry:
 Run
 ---
 
-Then, when starting your reprepro container, you will want to bind ports `22`
-from the reprepro container to a host external port.
-The reprepro container will create the debian repository to a volume in
-`/data`, so you need to bind this data volume to a host directory or a data
-container.
+To configure your reprepro container, you need to provide a read-only `/config`
+volume that should contain 4 files:
+  - `/config/apt-authorized_keys`: ssh authorized_keys file for the apt user
+    which should be used when running `apt-get` commands.
+    Should be chown root:root and chmod 644.
+  - `/config/reprepro-authorized_keys`: ssh authorized_keys file for the
+    reprepro user which should be used to upload debian packages with the
+    `dput` command.
+    Should be chown root:root and chmod 644.
+  - `/config/reprepro_pub.gpg`: gpg public key to be used to sign debian
+    packages.
+    Should be chown 600:root and chmod 600.
+  - `/config/reprepro_sec.gpg`: gpg private key to be used to sign debian
+    packages.
+    Should be chown 600:root and chmod 600.
+
+You also need to provide a read-write `/data` volume, which will be used to
+write the debian packages reprepro database, and the `.gnupg/` directory for
+imported gpg keys.
+
 If the `debian/` directory doesn't already exist in the `/data/` volume,
-docker-reprepro will generate a debian repository with some default
+docker-reprepro will generate a reprepro repository with some default
 configuration. If you want to customize the reprepro configuration, feel free
 to provide your own debian reprepro setup in `/data/debian/`.
 
-You also need to provide a read-only `/config` volume that should contain:
-  - the `/config/authorized_keys` file that will be use to allow both users
-    "reprepro" and "apt" to ssh to this container based on their public ssh
-    key.
-  - the `/config/reprepro_pub.gpg` and `/config/reprepro_sec.gpg` gpg public
-    and private keys that will be use to sign debian packages.
+Then, when starting your reprepro container, you will want to bind ports `22`
+from the reprepro container to a host external port, so that it is accessible
+from `dput` (upload packages) and `apt-get` (download packages) through ssh.
 
 For example:
 
@@ -43,6 +55,6 @@ For example:
 
     $ docker run --name reprepro \
         -v /home/reprepro/data:/data \
-        -v /home/reprepro/config:/config \
+        -v /home/reprepro/config:/config:ro \
         -p 22:22 \
         bbinet/reprepro
