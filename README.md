@@ -59,3 +59,25 @@ For example:
         -v /home/reprepro/config:/config:ro \
         -p 22:22 \
         bbinet/reprepro
+        
+Usage
+-----
+
+Here is how .dput.cf and sources.list can look like:
+
+.dput.cf:
+```
+[k1]
+fqdn = <reprepro_ip_address>
+incoming = /data/debian/incoming
+method = scp
+login = reprepro
+allow_unsigned_uploads = 0
+allowed_distributions = wheezy
+post_upload_command = ssh %(login)s@%(fqdn)s reprepro processincoming incoming
+```
+
+sources.list:
+```
+deb ssh://apt@<reprepro_ip_address>/data/debian wheezy main
+```
