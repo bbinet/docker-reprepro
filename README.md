@@ -2,6 +2,8 @@ docker-reprepro
 ===============
 Reprepro (Debian packages repository) docker container.
 
+Here is a good reference documentation to setup a full reprepro environment:
+http://vincent.bernat.im/en/blog/2014-local-apt-repositories.html
 
 
 Build
@@ -59,7 +61,7 @@ For example:
         -v /home/reprepro/config:/config:ro \
         -p 22:22 \
         bbinet/reprepro
-        
+
 Usage
 -----
 
