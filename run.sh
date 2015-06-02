@@ -44,7 +44,7 @@ else
     echo "=> /data/debian directory does not exist:"
     echo "   Configuring a default debian repository with reprepro..."
 
-    keyid=$(gpg --dry-run /config/reprepro_pub.gpg | sed "s/.*\/\([^ ]*\).*/\1/")
+    keyid=$(gpg --dry-run /config/reprepro_pub.gpg | grep "^pub " | sed "s/.*\/\([^ ]*\).*/\1/")
     if [ -z "$keyid" ]
     then
         echo "=> Please provide /config/reprepro_pub.gpg file to guess the key id to use for reprepro to sign pakages..."
