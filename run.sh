@@ -92,5 +92,5 @@ EOF
 fi
 
 echo "=> Starting SSH server..."
-exec /usr/sbin/sshd -f /sshd_config -D
+exec /usr/sbin/sshd -f /sshd_config -D -e
 
