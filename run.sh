@@ -53,41 +53,50 @@ else
     fi
 
     mkdir -p /data/debian/{tmp,incoming,conf}
+
     cat << EOF > /data/debian/conf/options
 verbose
 basedir /data/debian
 gnupghome ${GNUPGHOME}
 ask-passphrase
 EOF
-    cat << EOF > /data/debian/conf/incoming
-Name: incoming
-IncomingDir: /data/debian/incoming
-TempDir: /data/debian/tmp
-Allow: wheezy>wheezy/dev
-Cleanup: on_deny on_error
-EOF
-    cat << EOF > /data/debian/conf/distributions
+
+    for dist in $(echo ${RPP_DISTRIBUTIONS} | tr ";" "\n"); do
+        dcodename_var="RPP_CODENAME_${dist}"
+        darchs_var="RPP_ARCHITECTURES_${dist}"
+        dcomps_var="RPP_COMPONENTS_${dist}"
+        dcodename="${!dcodename_var}"
+        if [ -z "${dcodename}" ]; then
+            echo "=> No codename supplied for distribution ${dist}: falling back to ${dist} codename"
+            dcodename=${dist}
+        fi
+        cat << EOF >> /data/debian/conf/distributions
 Origin: ${REPREPRO_DEFAULT_NAME}
 Label: ${REPREPRO_DEFAULT_NAME}
-Codename: wheezy/dev
-Architectures: i386 amd64 armhf source
-Components: main
+Codename: ${dcodename}
+Architectures: ${!darchs_var:-"i386 amd64 armhf source"}
+Components: ${!dcomps_var:-"main"}
 Description: ${REPREPRO_DEFAULT_NAME} debian repository
-DebOverride: override.wheezy
-DscOverride: override.wheezy
+DebOverride: override.${dist}
+DscOverride: override.${dist}
 SignWith: ${keyid}
 
-Origin: ${REPREPRO_DEFAULT_NAME}
-Label: ${REPREPRO_DEFAULT_NAME}
-Codename: wheezy/prod
-Architectures: i386 amd64 armhf source
-Components: main
-Description: ${REPREPRO_DEFAULT_NAME} debian repository
-DebOverride: override.wheezy
-DscOverride: override.wheezy
-SignWith: ${keyid}
 EOF
-    touch /data/debian/conf/override.wheezy
+        touch /data/debian/conf/override.${dist}
+    done
+
+    for incoming in $(echo ${RPP_INCOMINGS} | tr ";" "\n"); do
+        iallow_var="RPP_ALLOW_${incoming}"
+        mkdir -p /data/debian/incoming/${incoming} /data/debian/tmp/${incoming}
+        cat << EOF >> /data/debian/conf/incoming
+Name: ${incoming}
+IncomingDir: /data/debian/incoming/${incoming}
+TempDir: /data/debian/tmp/${incoming}
+Allow: ${!iallow_var}
+Cleanup: on_deny on_error
+
+EOF
+    done
     chown -R reprepro:reprepro /data/debian
 fi
 
