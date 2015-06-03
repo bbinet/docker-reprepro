@@ -44,9 +44,11 @@ write the debian packages reprepro database, and the `.gnupg/` directory for
 imported gpg keys.
 
 If the `debian/` directory doesn't already exist in the `/data/` volume,
-docker-reprepro will generate a reprepro repository with some default
-configuration. If you want to customize the reprepro configuration, feel free
-to provide your own debian reprepro setup in `/data/debian/`.
+docker-reprepro will setup a reprepro repository based on configuration
+available through environment variables (see `docker run` example below).
+
+If you want to further customize the reprepro configuration, feel free to
+provide your own debian reprepro setup in `/data/debian/`.
 
 Then, when starting your reprepro container, you will want to bind ports `22`
 from the reprepro container to a host external port, so that it is accessible
@@ -59,6 +61,18 @@ For example:
     $ docker run --name reprepro \
         -v /home/reprepro/data:/data \
         -v /home/reprepro/config:/config:ro \
+        -e RPP_DISTRIBUTIONS="wdev;wprod;jdev;jprod" \
+        -e RPP_CODENAME_wdev="wheezy-dev" \
+        -e RPP_CODENAME_wprod="wheezy-prod" \
+        -e RPP_CODENAME_jdev="jessie-dev" \
+        -e RPP_CODENAME_jprod="jessie-prod" \
+        -e RPP_ARCHITECTURES_wdev="amd64 armhf source" \
+        -e RPP_ARCHITECTURES_wprod="amd64 armhf source" \
+        -e RPP_ARCHITECTURES_jdev="amd64 armhf source" \
+        -e RPP_ARCHITECTURES_jprod="amd64 armhf source" \
+        -e RPP_INCOMINGS="in_wheezy;in_jessie" \
+        -e RPP_ALLOW_in_wheezy="stable>wheezy-dev" \
+        -e RPP_ALLOW_in_jessie="stable>jessie-dev" \
         -p 22:22 \
         bbinet/reprepro
 
@@ -69,14 +83,14 @@ Here is how .dput.cf and sources.list can look like:
 
 .dput.cf:
 ```
-[k1]
+[in_wheezy]
 fqdn = <reprepro_ip_address>
-incoming = /data/debian/incoming
+incoming = /data/debian/incoming/in_wheezy
 method = scp
 login = reprepro
 allow_unsigned_uploads = 0
-allowed_distributions = wheezy
-post_upload_command = ssh %(login)s@%(fqdn)s reprepro processincoming incoming
+allowed_distributions = stable
+post_upload_command = ssh %(login)s@%(fqdn)s reprepro processincoming in_wheezy
 ```
 
 sources.list:
