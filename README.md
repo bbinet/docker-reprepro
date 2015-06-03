@@ -91,6 +91,15 @@ login = reprepro
 allow_unsigned_uploads = 0
 allowed_distributions = stable
 post_upload_command = ssh %(login)s@%(fqdn)s reprepro processincoming in_wheezy
+
+[in_jessie]
+fqdn = <reprepro_ip_address>
+incoming = /data/debian/incoming/in_jessie
+method = scp
+login = reprepro
+allow_unsigned_uploads = 0
+allowed_distributions = stable
+post_upload_command = ssh %(login)s@%(fqdn)s reprepro processincoming in_jessie
 ```
 
 sources.list:
