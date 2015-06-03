@@ -79,30 +79,28 @@ For example:
 Usage
 -----
 
-Here is how .dput.cf and sources.list can look like:
+Here is how `.dput.cf` and `sources.list` can look like:
 
-.dput.cf:
-```
-[in_wheezy]
-fqdn = <reprepro_ip_address>
-incoming = /data/debian/incoming/in_wheezy
-method = scp
-login = reprepro
-allow_unsigned_uploads = 0
-allowed_distributions = stable
-post_upload_command = ssh %(login)s@%(fqdn)s reprepro processincoming in_wheezy
+`.dput.cf`:
 
-[in_jessie]
-fqdn = <reprepro_ip_address>
-incoming = /data/debian/incoming/in_jessie
-method = scp
-login = reprepro
-allow_unsigned_uploads = 0
-allowed_distributions = stable
-post_upload_command = ssh %(login)s@%(fqdn)s reprepro processincoming in_jessie
-```
+    [in_wheezy]
+    fqdn = <reprepro_ip_address>
+    incoming = /data/debian/incoming/in_wheezy
+    method = scp
+    login = reprepro
+    allow_unsigned_uploads = 0
+    allowed_distributions = stable
+    post_upload_command = ssh %(login)s@%(fqdn)s reprepro processincoming in_wheezy
 
-sources.list:
-```
-deb ssh://apt@<reprepro_ip_address>/data/debian wheezy main
-```
+    [in_jessie]
+    fqdn = <reprepro_ip_address>
+    incoming = /data/debian/incoming/in_jessie
+    method = scp
+    login = reprepro
+    allow_unsigned_uploads = 0
+    allowed_distributions = stable
+    post_upload_command = ssh %(login)s@%(fqdn)s reprepro processincoming in_jessie
+
+`sources.list`:
+
+    deb ssh://apt@<reprepro_ip_address>/data/debian jessie-dev main
